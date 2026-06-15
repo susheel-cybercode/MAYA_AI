@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-MAYA with BPE Tokenizer - Real Transformer LLM
+NOAH with BPE Tokenizer - Real Transformer LLM
 Uses trained BPE tokenizer for subword tokenization.
 """
 
@@ -103,7 +103,7 @@ class TransformerBlock(nn.Module):
         return x
 
 
-class MAYA_LLM(nn.Module):
+class NOAH_LLM(nn.Module):
     def __init__(self, config: ModelConfig):
         super().__init__()
         self.config = config
@@ -209,7 +209,7 @@ class TextDataset(Dataset):
         return x, y
 
 
-def train_maya(model_size: str = "small",
+def train_noah(model_size: str = "small",
                data_dir: str = "training_data",
                epochs: int = 3,
                batch_size: int = 4,
@@ -217,13 +217,13 @@ def train_maya(model_size: str = "small",
 
     config = MODEL_CONFIGS[model_size]
     print(f"\n{'='*60}")
-    print(f"  Training MAYA-{model_size.upper()} with BPE Tokenizer")
+    print(f"  Training NOAH-{model_size.upper()} with BPE Tokenizer")
     print(f"  Vocab size: {config.vocab_size}")
     print(f"  Parameters: ~{config.params_count:,}")
     print(f"{'='*60}\n")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = MAYA_LLM(config).to(device)
+    model = NOAH_LLM(config).to(device)
     print(f"Model loaded on {device}")
     print(f"Actual params: {sum(p.numel() for p in model.parameters()):,}")
 
@@ -275,7 +275,7 @@ def train_maya(model_size: str = "small",
         avg_loss = total_loss / len(dataloader)
         print(f"\nEpoch {epoch+1} complete! Average Loss: {avg_loss:.4f}\n")
 
-    save_path = f"maya_bpe_{model_size}.pt"
+    save_path = f"noah_bpe_{model_size}.pt"
     torch.save({
         'model_state_dict': model.state_dict(),
         'config': config,
@@ -285,16 +285,16 @@ def train_maya(model_size: str = "small",
     return model
 
 
-def chat_with_maya(model_size: str = "small"):
+def chat_with_noah(model_size: str = "small"):
     config = MODEL_CONFIGS[model_size]
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    tokenizer_path = Path("training_data") / "maya_bpe_tokenizer.json"
+    tokenizer_path = Path("training_data") / "noah_bpe_tokenizer.json"
     tokenizer = BPETokenizerWrapper(str(tokenizer_path))
     config.vocab_size = tokenizer.vocab_size
 
-    model = MAYA_LLM(config).to(device)
-    model_path = f"maya_bpe_{model_size}.pt"
+    model = NOAH_LLM(config).to(device)
+    model_path = f"noah_bpe_{model_size}.pt"
     if os.path.exists(model_path):
         print(f"Loading model from {model_path}...")
         checkpoint = torch.load(model_path, map_location=device)
@@ -304,7 +304,7 @@ def chat_with_maya(model_size: str = "small"):
         print("WARNING: No trained model found.")
 
     print("=" * 60)
-    print(f"  MAYA BPE - Transformer LLM")
+    print(f"  NOAH BPE - Transformer LLM")
     print(f"  Size: {model_size.upper()} | Device: {device}")
     print(f"  Vocab: {tokenizer.vocab_size} | Params: {sum(p.numel() for p in model.parameters()):,}")
     print("  Type 'exit' to quit")
@@ -316,10 +316,10 @@ def chat_with_maya(model_size: str = "small"):
             if not prompt:
                 continue
             if prompt.lower() in ['exit', 'quit', 'q']:
-                print("\nMAYA: Goodbye!")
+                print("\nNOAH: Goodbye!")
                 break
 
-            print("\nMAYA: ", end="", flush=True)
+            print("\nNOAH: ", end="", flush=True)
             input_ids = torch.tensor([tokenizer.encode(prompt)], device=device)
             with torch.no_grad():
                 generated = model.generate(input_ids, max_tokens=100, temperature=0.8)
@@ -327,7 +327,7 @@ def chat_with_maya(model_size: str = "small"):
                 response = tokenizer.decode(response_ids)
                 print(response, flush=True)
         except KeyboardInterrupt:
-            print("\n\nMAYA: Interrupted. Goodbye!")
+            print("\n\nNOAH: Interrupted. Goodbye!")
             break
         except Exception as e:
             print(f"\nError: {e}")
@@ -335,7 +335,7 @@ def chat_with_maya(model_size: str = "small"):
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="MAYA BPE - Real LLM")
+    parser = argparse.ArgumentParser(description="NOAH BPE - Real LLM")
     parser.add_argument("--size", choices=["small", "medium", "large"], default="small")
     parser.add_argument("--train", action="store_true")
     parser.add_argument("--data", type=str, default="training_data")
@@ -344,6 +344,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.train:
-        train_maya(args.size, args.data, args.epochs, args.batch_size)
+        train_noah(args.size, args.data, args.epochs, args.batch_size)
     else:
-        chat_with_maya(args.size)
+        chat_with_noah(args.size)

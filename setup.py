@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="maya-ai",
+    name="noah-llm",
     version="1.0.0",
-    description="MAYA AI - The Ultimate AI Assistant",
-    author="MAYA AI Team",
+    description="NOAH LLM - Uncensored Local Transformer",
+    author="NOAH LLM Team",
     packages=find_packages(),
     install_requires=[
         'flask>=2.0.0',
@@ -16,7 +16,7 @@ setup(
     python_requires='>=3.8',
     entry_points={
         'console_scripts': [
-            'maya-ai=maya_ai.main:main',
+            'noah-llm=maya_bpe:chat_with_noah',
         ]
     }
 )

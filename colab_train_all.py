@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-MAYA LLM - Complete Colab Training Script
+NOAH LLM - Complete Colab Training Script
 Run this entire file in ONE Colab cell.
 Mounts Drive, clones repo, trains tokenizer, trains model, saves to Drive.
 """
@@ -28,7 +28,7 @@ def run(cmd, desc=""):
     return result
 
 def main():
-    print("🚀 MAYA LLM - Complete Colab Training")
+    print("🚀 NOAH LLM - Complete Colab Training")
     print("=" * 60)
     
     # 1. Mount Google Drive
@@ -38,8 +38,8 @@ def main():
     print("✅ Drive mounted")
     
     # 2. Setup directories
-    work_dir = Path("/content/MAYA_AI")
-    drive_save_dir = Path("/content/drive/MyDrive/MAYA_models")
+    work_dir = Path("/content/NOAH_LLM")
+    drive_save_dir = Path("/content/drive/MyDrive/NOAH_models")
     drive_save_dir.mkdir(parents=True, exist_ok=True)
     
     # 3. Clone repo
@@ -64,7 +64,7 @@ def main():
         print(f"   VRAM: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")
     
     # 6. Train BPE tokenizer
-    tokenizer_path = work_dir / "training_data" / "maya_bpe_tokenizer.json"
+    tokenizer_path = work_dir / "training_data" / "noah_bpe_tokenizer.json"
     if not tokenizer_path.exists():
         run([sys.executable, "train_bpe_tokenizer.py"], "Training BPE tokenizer")
     else:
@@ -75,7 +75,7 @@ def main():
     epochs = 3
     batch_size = 8
     
-    model_file = work_dir / f"maya_bpe_{model_size}.pt"
+    model_file = work_dir / f"noah_bpe_{model_size}.pt"
     if not model_file.exists():
         run([
             sys.executable, "maya_bpe.py",
@@ -90,8 +90,8 @@ def main():
     # 8. Save to Google Drive
     print("\n💾 Saving to Google Drive...")
     files_to_save = [
-        f"maya_bpe_{model_size}.pt",
-        "training_data/maya_bpe_tokenizer.json"
+        f"noah_bpe_{model_size}.pt",
+        "training_data/noah_bpe_tokenizer.json"
     ]
     
     for f in files_to_save:
@@ -108,11 +108,11 @@ def main():
     test_result = run([
         sys.executable, "-c", f"""
 import torch
-from maya_bpe import MAYA_LLM, ModelConfig, BPETokenizerWrapper
+from maya_bpe import NOAH_LLM, ModelConfig, BPETokenizerWrapper
 
-tokenizer = BPETokenizerWrapper('training_data/maya_bpe_tokenizer.json')
+tokenizer = BPETokenizerWrapper('training_data/noah_bpe_tokenizer.json')
 config = ModelConfig('test', vocab_size=tokenizer.vocab_size, d_model=256, n_layers=4, n_heads=4, d_ff=1024, max_seq_len=512)
-model = MAYA_LLM(config).to('{device}')
+model = NOAH_LLM(config).to('{device}')
 
 if Path('{model_file}').exists():
     ckpt = torch.load('{model_file}', map_location='{device}')
@@ -132,10 +132,10 @@ with torch.no_grad():
     print("🎉 ALL DONE!")
     print("=" * 60)
     print(f"📁 Model saved to: {drive_save_dir}")
-    print(f"   - maya_bpe_{model_size}.pt")
-    print(f"   - maya_bpe_tokenizer.json")
+    print(f"   - noah_bpe_{model_size}.pt")
+    print(f"   - noah_bpe_tokenizer.json")
     print("\n🔄 To resume later:")
-    print(f"   1. Copy files back: cp {drive_save_dir}/* /content/MAYA_AI/")
+    print(f"   1. Copy files back: cp {drive_save_dir}/* /content/NOAH_LLM/")
     print(f"   2. Run training again with more epochs")
 
 if __name__ == "__main__":

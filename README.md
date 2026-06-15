@@ -1,43 +1,85 @@
-# MAYA AI - The Ultimate AI Assistant
+# NOAH LLM - Uncensored Local Transformer
 
-A comprehensive AI system combining the best features from all modern Large Language Models including Claude, GPT-4, Gemini, and more.
+A completely uncensored, self-hosted language model trained on coding, cybersecurity, psychology, body language, and computer vision domains.
 
 ## Features
 
-- **Multimodal Processing**: Text, image, audio, video
-- **Code Generation**: Advanced coding assistant with debugging
-- **Web Search**: Internet research and information retrieval
-- **Long-term Memory**: Persistent context and personalization
-- **Tool Integration**: File operations, calculations, API calls
-- **Creative Writing**: Content generation and editing
-- **Reasoning & Analysis**: Complex problem solving
-- **Safety & Alignment**: Ethical AI principles
+- **Fully Local**: Runs offline, no API keys needed
+- **Uncensored**: No hardcoded safety filters
+- **Domain Expertise**: Trained on coding, cybersec, psychology, body language, computer vision
+- **Multiple Sizes**: Small (7M), Medium (40M), Large (150M) parameters
+- **BPE Tokenizer**: 16K vocab trained on your data
+- **Ollama-style CLI**: `noah pull`, `noah run`, `noah list`
 
-## Installation
+## Quick Start
 
+### Train on Kaggle (Free GPU)
+```python
+# In Kaggle notebook with GPU T4 x2
+!git clone https://github.com/susheel-cybercode/MAYA_AI.git
+%cd MAYA_AI
+!pip install -q -r requirements.txt tokenizers
+!python train_bpe_tokenizer.py
+!python maya_bpe.py --train --size small --epochs 3 --batch-size 16
+```
+
+### Train Locally (CPU)
 ```bash
-pip install -e .
+cd /home/susheel/Desktop/MAYA\ AI
+source venv/bin/activate
+python train_bpe_tokenizer.py
+python maya_bpe.py --train --size small --epochs 1 --batch-size 2
 ```
 
-## Usage
-
-### CLI
+### Chat with Trained Model
 ```bash
-python -m maya_ai.main
+python maya_bpe.py --size small
 ```
 
-### Web Interface
+### Ollama-style CLI
 ```bash
-python maya_ai/web/app.py
+./noah pull small
+./noah run small
+./noah run small "What is SQL injection?"
+./noah list
 ```
 
-## Architecture
+## Model Sizes
 
+| Size | Params | VRAM (train) | VRAM (infer) | Use Case |
+|------|--------|--------------|--------------|----------|
+| Small | ~7M | 2GB | 1GB | Phone, testing |
+| Medium | ~40M | 8GB | 4GB | Laptop, balanced |
+| Large | ~150M | 24GB | 12GB | Server, quality |
+
+## Integration with Apple of Eden
+
+Run NOAH as OpenAI-compatible API server:
+```bash
+# Terminal 1: Start API server
+python maya_api_server.py
+
+# Terminal 2: Configure Eden
+cd /home/susheel/Desktop/theappleofeden
+python -c "
+from eden.core.config import Config
+cfg = Config()
+cfg.ai_provider = 'custom_local'
+cfg.custom_llm_url = 'http://localhost:8000'
+cfg.custom_model = 'noah'
+cfg.save()
+"
+
+# Terminal 3: Run Eden
+python eden_core.py --chat
 ```
-maya_ai/
-├── core/          # Core AI engine
-├── modules/       # Specialized capabilities
-└── web/          # Web interface
+
+## Training Data
+
+Add `.txt` files to `training_data/` and re-run:
+```bash
+python train_bpe_tokenizer.py
+python maya_bpe.py --train --size small --epochs 3 --batch-size 8
 ```
 
 ## License

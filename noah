@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# NOAH LLM CLI wrapper - use like Ollama
+# Usage: noah <command> [args]
+
+NOAH_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$NOAH_DIR/venv/bin/activate"
+python "$NOAH_DIR/maya_bpe.py" "$@"

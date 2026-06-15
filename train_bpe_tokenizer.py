@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Train a BPE tokenizer on MAYA training data."""
+"""Train a BPE tokenizer on NOAH training data."""
 
 from tokenizers import Tokenizer
 from tokenizers.models import BPE
@@ -44,7 +44,7 @@ tokenizer.post_processor = TemplateProcessing(
 )
 
 # Save tokenizer
-tokenizer.save(str(data_dir / "maya_bpe_tokenizer.json"))
+tokenizer.save(str(data_dir / "noah_bpe_tokenizer.json"))
 print(f"Tokenizer saved. Vocab size: {tokenizer.get_vocab_size()}")
 
 # Test encoding
