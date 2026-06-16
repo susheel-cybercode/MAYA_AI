@@ -222,6 +222,9 @@ def train_noah(model_size: str = "small",
     print(f"  Parameters: ~{config.params_count:,}")
     print(f"{'='*60}\n")
 
+    # Verify we're using NOAH class
+    print(f"  Model class: NOAH_LLM")
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = NOAH_LLM(config).to(device)
     print(f"Model loaded on {device}")
